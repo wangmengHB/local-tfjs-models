@@ -1,0 +1,24 @@
+{
+  "name": "local-tfjs-models",
+  "version": "0.0.0",
+  "description": "local tfjs models assets",
+  "files": [
+    "blazeface",
+    "facemesh",
+    "bodypix"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wangmengHB/local-tfjs-models.git"
+  },
+  "keywords": [
+    "tfjs",
+    "models"
+  ],
+  "author": "Meng Wang <wangmeng_hb@163.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wangmengHB/local-tfjs-models/issues"
+  },
+  "homepage": "https://github.com/wangmengHB/local-tfjs-models#readme"
+}
