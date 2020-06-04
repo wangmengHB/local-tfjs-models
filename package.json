@@ -1,11 +1,11 @@
 {
   "name": "local-tfjs-models",
-  "version": "0.0.0",
+  "version": "0.0.0-rc.1",
   "description": "local tfjs models assets",
   "files": [
     "blazeface",
     "facemesh",
-    "bodypix"
+    "bilibili"
   ],
   "repository": {
     "type": "git",
