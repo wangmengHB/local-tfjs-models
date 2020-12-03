@@ -1,11 +1,12 @@
 {
   "name": "local-tfjs-models",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "local tfjs models assets",
   "files": [
     "blazeface",
     "facemesh",
-    "imagescore"
+    "imagescore",
+    "cartoon-GAN"
   ],
   "repository": {
     "type": "git",
