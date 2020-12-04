@@ -40,49 +40,58 @@ There are 4 cartoon style pretrained models: hayao, hosoda, paprika, shinkai (th
 
 ### how to use it
 ```typescript
-import * as tf from '@tensorflow/tfjs-core';
+import * as tf from '@tensorflow/tfjs';
 
-const STYLE_MODEL_URLS = {
-    "hayao": "https://unpkg.com/local-tfjs-models@0.0.2/cartoon-GAN/hayao/model.json",   
-    "hosoda": "https://unpkg.com/local-tfjs-models@0.0.2/cartoon-GAN/hosoda/model.json",
-    "paprika": "https://unpkg.com/local-tfjs-models@0.0.2/cartoon-GAN/paprika/model.json",
-    "shinkai": "https://unpkg.com/local-tfjs-models@0.0.2/cartoon-GAN/shinkai/model.json"   
+const STYLE_MODEL_URL_MAP = {
+    "hayao": "https://unpkg.com/local-tfjs-models@0.0.3/cartoon-GAN/hayao/model.json",   
+    "hosoda": "https://unpkg.com/local-tfjs-models@0.0.3/cartoon-GAN/hosoda/model.json",
+    "paprika": "https://unpkg.com/local-tfjs-models@0.0.3/cartoon-GAN/paprika/model.json",
+    "shinkai": "https://unpkg.com/local-tfjs-models@0.0.3/cartoon-GAN/shinkai/model.json"   
 };
 
 type STYLE_TYPE = "hayao" | "hosoda" | "paprika" | "shinkai";
 
-async function setupModel(style: STYLE_TYPE): tf.GraphModel {
-    const model = await tf.loadGraphModel(STYLE_MODEL_URLS[style]);
+async function setupModel(style: STYLE_TYPE): Promise<tf.GraphModel> {
+    const model = await tf.loadGraphModel(STYLE_MODEL_URL_MAP[style]);
     // this predict action is used to save time, because every first predict action is very slow.
-    model.predict(tf.zeros([1, 1, 1, 3])).dispose();
+    model.predict(tf.zeros([1, 1, 1, 3]));
     return model;
 }
 
-async function predict(style, inputImgElement: HTMLImageElement, outputElement: HTMLImageElement) {
-    // load and init model
-    const model = await setupGenerator(style);
-
+function predict(
+    model: tf.GraphModel, 
+    inputImgElement: HTMLImageElement | HTMLCanvasElement, 
+    outputElement: HTMLCanvasElement
+) {
     // convert the input image to tensor accepted by model
-    let inputImgTensor = tf.browser.fromPixels(inputImgElement);
-    inputImgTensor = inputImgTensor.toFloat();
-    inputImgTensor = inputImgTensor.reverse(axis=2);
-    inputImgTensor = tf.expandDims(inputImgTensor, 0);
+    let inputTensor = tf.browser.fromPixels(inputImgElement);
+    inputTensor = inputTensor.toFloat();
+    inputTensor = inputTensor.reverse(2);
+    inputTensor = tf.expandDims(inputTensor, 0);
 
-    let generatedImgTensor = model.predict(inputImgTensor);
+    let outputTensor = model.predict(inputTensor as tf.Tensor<tf.Rank>) as tf.Tensor<tf.Rank>;
     // convert the predict tensor to output image
-    generatedImgTensor = tf.squeeze(generatedImgTensor, 0);
-    generatedImgTensor = generatedImgTensor.reverse(axis=2);
-    generatedImgTensor = generatedImgTensor.mul(0.5).add(0.5);
-    generatedImgTensor = tf.clipByValue(generatedImgTensor, 0, 1);
+    outputTensor = tf.squeeze(outputTensor, [0]);
+    outputTensor = outputTensor.reverse(2);
+    outputTensor = outputTensor.mul(0.5).add(0.5);
+    outputTensor = tf.clipByValue(outputTensor, 0, 1);
 
-    // put the result into canvas/image element.
-    tf.browser.toPixels(imgTensor, outputElement);
+    // put the result into canvas element.
+    tf.browser.toPixels(outputTensor as tf.Tensor2D, outputElement);
 
 }
 
 // main
+/*
+*   style: the name of style model
+*   img: the input image/canvas element
+*   out: the output canvas element
+*/
 
-predict("hayao", img, output);
+// load and init model
+const model = await setupModel(style = "hayao");
+// predict the result and paint it to the output canvas element
+predict(model, img, out);
 
 ```
 

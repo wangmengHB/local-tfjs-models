@@ -1,6 +1,6 @@
 {
   "name": "local-tfjs-models",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "local tfjs models assets",
   "files": [
     "blazeface",
